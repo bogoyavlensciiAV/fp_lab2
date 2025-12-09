@@ -1,24 +1,65 @@
-# lab2
+# lab2 on gleam⭐(Богоявленский Александр P3317)
+## Вариант: sc-set
 
-[![Package Version](https://img.shields.io/hexpm/v/lab2)](https://hex.pm/packages/lab2)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/lab2/)
+## Требования к разработанному ПО
 
-```sh
-gleam add lab2@1
-```
+### Функциональные требования
+- добавление и удаление элементов;
+
+- фильтрация;
+
+- отображение (map);
+
+- свертки (левая и правая);
+
+- структура должна быть моноидом.
+
+## Ключевые элементы реализации
+Устройство
 ```gleam
-import lab2
+pub type Bucket(k) {
+  Bucket(items: List(k))
+}
 
-pub fn main() -> Nil {
-  // TODO: An example of the project in use
+pub opaque type Set(k) {
+  Set(
+    buckets: List(Bucket(k)),
+    size: Int,
+    capacity: Int,
+    hasher: fn(k) -> Int,
+    eq: fn(k, k) -> Bool,
+  )
 }
 ```
+Часть операций:
+```gleam
+pub fn new(hash: fn(k) -> Int, eq: fn(k, k) -> Bool, cmp: fn(k, k) -> Order) 
+  -> SCSet(k)
 
-Further documentation can be found at <https://hexdocs.pm/lab2>.
+pub fn insert(set: SCSet(k), value: k) -> SCSet(k)
+pub fn delete(set: SCSet(k), value: k) -> SCSet(k)  
+pub fn member(set: SCSet(k), value: k) -> Bool
+pub fn union(a: SCSet(k), b: SCSet(k)) -> SCSet(k)
+```
+## Вывод
+Реализовывать было прикольно, хотя узнал интересную особенность, из-за которой ненадолго встрял:
+```gleam
+  let a = True
+  let b = True //Type mismatch
+  (a && b) |> should.equal(True)
+```
+Из-за того что он принял эту передачу за функцию, он начинает ругаться
 
-## Development
+Всвязи с чем рабочей реализацией будет
+```gleam
+  let a = True
+  let b = True
+  let c = a && b
+  c |> should.equal(True)
 
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
+  //либо без пайпа
+
+  let a = True
+  let b = True
+  should.equal(a && b,True)
 ```
