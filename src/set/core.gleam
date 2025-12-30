@@ -83,6 +83,11 @@ pub fn to_list(set: Set(k)) -> List(k) {
   |> list.flat_map(fn(bucket) { bucket.items })
 }
 
+pub fn check_for_all(set: Set(k), f: fn(k) -> Bool) -> Bool {
+  let buckets1 = types.get_buckets(set)
+  list.all(buckets1, fn(bucket) { list.all(bucket.items, f) })
+}
+
 fn update_bucket_insert(
   buckets: List(Bucket(k)),
   index: Int,
